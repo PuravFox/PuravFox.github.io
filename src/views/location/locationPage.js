@@ -1,6 +1,6 @@
 import { get, post } from "../../helper/apiManager";
 import _ from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   Badge,
@@ -13,14 +13,21 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import MyMapComponent from "components/Map/GoogleMapsBasic";
 
 const Location = () => {
   const [locationList, setlocationList] = useState([]);
+  const [latestCoord, setlatestCoord] = useState({});
 
   const getLocationFromBrowser = (second) => {
     navigator.geolocation.getCurrentPosition(
       (showPosition) => {
         let _newCords = showPosition?.coords;
+        // setlatestCoord(_newCords);
+        setlatestCoord({
+          latitude: _newCords?.latitude,
+          longitude: _newCords.longitude,
+        });
         _newCords.timestamp = new Date().toLocaleTimeString();
 
         let _newLocationList = [...locationList];
@@ -36,7 +43,7 @@ const Location = () => {
   };
 
   //record data for every 5 seconds
-  setTimeout(getLocationFromBrowser, 5000);
+  setTimeout(getLocationFromBrowser, 10000);
 
   const removeOldSlice = (newLocationList) => {
     if (newLocationList.length > 5) {
@@ -46,6 +53,15 @@ const Location = () => {
       return newLocationList;
     }
   };
+
+  const MemoMap = useCallback(() => {
+    return (
+      <MyMapComponent
+        long={latestCoord?.longitude}
+        lat={latestCoord?.latitude}
+      />
+    );
+  }, [latestCoord]);
 
   return (
     <>
@@ -78,6 +94,12 @@ const Location = () => {
                     ))}
                   </tbody>
                 </Table>
+
+                {/* <MyMapComponent
+                  long={locationList[0]?.longitude}
+                  lat={locationList[0]?.latitude}
+                /> */}
+                <MemoMap />
               </Card.Body>
             </Card>
           </Col>
