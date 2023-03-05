@@ -1,4 +1,4 @@
-import { getAccessToken } from "../helper/auth";
+import { getAccessToken } from "./auth";
 
 const get = (url) => {
   var token = localStorage.getItem("token");
