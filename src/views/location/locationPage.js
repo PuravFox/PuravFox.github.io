@@ -14,6 +14,7 @@ import {
   Col,
 } from "react-bootstrap";
 import MyMapComponent from "components/Map/GoogleMapsBasic";
+import { DownloadARRAY2CSV } from "helper/common";
 
 const Location = () => {
   const [locationList, setlocationList] = useState([]);
@@ -22,16 +23,24 @@ const Location = () => {
   const getLocationFromBrowser = (second) => {
     navigator.geolocation.getCurrentPosition(
       (showPosition) => {
-        let _newCords = showPosition?.coords;
-        // setlatestCoord(_newCords);
+        let _orgCords = showPosition?.coords;
+        let _newCords = {
+          latitude: _orgCords?.latitude,
+          longitude: _orgCords?.longitude,
+          accuracy: _orgCords?.accuracy,
+        };
+
         setlatestCoord({
-          latitude: _newCords?.latitude,
-          longitude: _newCords.longitude,
+          latitude: _orgCords?.latitude,
+          longitude: _orgCords.longitude,
         });
         _newCords.timestamp = new Date().toLocaleTimeString();
 
         let _newLocationList = [...locationList];
-        _newLocationList = removeOldSlice(_newLocationList);
+
+        // to show top 5 resuls
+        // _newLocationList = removeOldSlice(_newLocationList);
+
         _newLocationList.unshift(_newCords);
 
         setlocationList(_newLocationList);
@@ -42,8 +51,8 @@ const Location = () => {
     );
   };
 
-  //record data for every 5 seconds
-  setTimeout(getLocationFromBrowser, 10000);
+  //record data for every 10 seconds
+  setTimeout(getLocationFromBrowser, 20000);
 
   const removeOldSlice = (newLocationList) => {
     if (newLocationList.length > 5) {
@@ -56,10 +65,12 @@ const Location = () => {
 
   const MemoMap = useCallback(() => {
     return (
-      <MyMapComponent
-        long={latestCoord?.longitude}
-        lat={latestCoord?.latitude}
-      />
+      <div className="">
+        <MyMapComponent
+          long={latestCoord?.longitude}
+          lat={latestCoord?.latitude}
+        />
+      </div>
     );
   }, [latestCoord]);
 
@@ -76,6 +87,15 @@ const Location = () => {
                 </p>
               </Card.Header>
               <Card.Body className="table-full-width table-responsive px-0">
+                <Button
+                  name="a2c"
+                  onClick={() => DownloadARRAY2CSV(locationList)}
+                >
+                  Get CSV
+                </Button>
+
+                <MemoMap />
+
                 <Table className="table-hover table-striped">
                   <thead>
                     <tr>
@@ -94,12 +114,6 @@ const Location = () => {
                     ))}
                   </tbody>
                 </Table>
-
-                {/* <MyMapComponent
-                  long={locationList[0]?.longitude}
-                  lat={locationList[0]?.latitude}
-                /> */}
-                <MemoMap />
               </Card.Body>
             </Card>
           </Col>

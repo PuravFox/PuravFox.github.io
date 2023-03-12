@@ -12,13 +12,13 @@ function MyMapComponent({ lat, long }) {
     //   style={{ width: 600, height: 400 }}
     //   mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=L4i2XIgmCPxVYFMV2kmQ    "
     ///>
-    <>
+    <div className="col-lg-1">
       <iframe
-        width="800"
+        width="300"
         height="400"
-        src={`https://api.maptiler.com/maps/streets-v2/?key=L4i2XIgmCPxVYFMV2kmQ#14.0/${lat}/${long}`}
+        src={`https://api.maptiler.com/maps/streets-v2/?key=L4i2XIgmCPxVYFMV2kmQ#16.0/${lat}/${long}`}
       ></iframe>
-    </>
+    </div>
   );
 }
 
